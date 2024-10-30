@@ -12,7 +12,7 @@ export const GET = async ({ request }) => {
 
 	try {
 		// Fetch just the IDs of latest top stories (no details yet)
-		const latestStoryIds = await fetchTopStories(10);
+		const latestStoryIds = await fetchTopStories();
 
 		// Get the set of story IDs we've already sent notifications for
 		const sentStories = await redis.smembers('sent_story_ids');
