@@ -127,7 +127,7 @@ export function generateMemorablePassword() {
 		'terrible',
 		'tired',
 		'tough',
-		'ugly',
+		'pretty',
 		'unusual',
 		'victorious',
 		'wandering',

@@ -1,42 +1,74 @@
 <script>
+	import { invalidateAll } from '$app/navigation';
 	import { PUBLIC_VAPID_KEY } from '$env/static/public';
 
 	let { data } = $props();
 
-	async function enablePushNotifications() {
-		// Check if the browser supports push notifications
+	async function handlePushNotifications() {
 		if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
 			alert('Sorry, push notifications are not supported by your browser');
 			return;
 		}
 
 		try {
-			// Request notification permission
-			const permission = await Notification.requestPermission();
-			if (permission !== 'granted') {
-				alert('Permission for notifications was denied');
+			const registration = await navigator.serviceWorker.getRegistration();
+			if (!registration) {
+				alert('No service worker found. Please refresh the page and try again.');
 				return;
 			}
 
-			// Check for existing service worker registration
-			const registration = await navigator.serviceWorker.getRegistration();
+			if (data.hasSubscription) {
+				// Disable notifications
+				const subscription = await registration.pushManager.getSubscription();
+				if (subscription) {
+					await subscription.unsubscribe();
+				}
 
-			if (!registration) {
-				throw new Error('No service worker registration found');
+				const response = await fetch('/', {
+					method: 'DELETE',
+					headers: { 'Content-Type': 'application/json' }
+				});
+
+				if (!response.ok) {
+					const errorText = await response.text();
+					throw new Error(errorText || 'Failed to remove subscription from server');
+				}
+			} else {
+				// Enable notifications
+				const permission = await Notification.requestPermission();
+				if (permission !== 'granted') {
+					alert('Permission for notifications was denied');
+					return;
+				}
+
+				const subscription = await registration.pushManager.subscribe({
+					userVisibleOnly: true,
+					applicationServerKey: PUBLIC_VAPID_KEY
+				});
+
+				const response = await fetch('/', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(subscription.toJSON())
+				});
+
+				if (!response.ok) {
+					const errorText = await response.text();
+					throw new Error(errorText || 'Failed to save subscription on server');
+				}
 			}
 
-			// Get push subscription
-			const subscription = await registration.pushManager.subscribe({
-				userVisibleOnly: true,
-				applicationServerKey: PUBLIC_VAPID_KEY
-			});
-
-			// Log subscription instead of sending to server
-			console.log(JSON.stringify(subscription.toJSON(), null, 2));
-			alert('Successfully subscribed to push notifications!');
+			invalidateAll();
 		} catch (error) {
-			console.error('Error enabling push notifications:', error);
-			alert('Failed to enable push notifications');
+			console.error(
+				`Error ${data.hasSubscription ? 'disabling' : 'enabling'} push notifications:`,
+				error
+			);
+			alert(
+				error instanceof Error
+					? error.message
+					: `Failed to ${data.hasSubscription ? 'disable' : 'enable'} push notifications`
+			);
 		}
 	}
 </script>
@@ -64,19 +96,16 @@
 		</a>
 	</p>
 
-	<div
+	<!-- <div
 		class="mt-8 rounded-md bg-white p-4 shadow dark:border dark:border-stone-800 dark:bg-stone-900"
-	>
-		<p class="font-mono text-lg font-semibold">{data.password}</p>
-		<p class="mt-2 text-sm text-stone-500 dark:text-stone-400">
-			Save this password - you'll need it to manage your push notification settings.
-		</p>
-	</div>
+	></div> -->
 
 	<button
-		class="mt-8 w-full rounded-md bg-stone-800 px-4 py-2 font-semibold text-stone-100 transition-colors hover:bg-stone-900 dark:bg-stone-100 dark:text-stone-800 dark:hover:bg-stone-200"
-		onclick={enablePushNotifications}
+		class="mt-8 w-full rounded-md {data.hasSubscription
+			? 'bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:text-stone-100 dark:hover:bg-red-700'
+			: 'bg-stone-800 hover:bg-stone-900 dark:bg-stone-100 dark:text-stone-800 dark:hover:bg-stone-200'} px-4 py-2 font-semibold text-stone-100 transition-colors"
+		onclick={handlePushNotifications}
 	>
-		Enable Push Notifications
+		{data.hasSubscription ? 'Disable' : 'Enable'} Push Notifications
 	</button>
 </div>
