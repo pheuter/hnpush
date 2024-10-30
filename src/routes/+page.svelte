@@ -6,7 +6,9 @@
 
 	async function handlePushNotifications() {
 		if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-			alert('Sorry, push notifications are not supported by your browser');
+			alert(
+				'Push notifications are not supported by your browser. On iOS, you must first add this site to your home screen using the share button and open it from there.'
+			);
 			return;
 		}
 

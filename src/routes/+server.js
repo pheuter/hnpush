@@ -1,4 +1,5 @@
 import { redis } from '$lib/server/redis';
+import { sendPushNotifications } from '$lib/server/push';
 
 export const POST = async ({ cookies, request }) => {
 	try {
@@ -10,6 +11,11 @@ export const POST = async ({ cookies, request }) => {
 		}
 
 		await redis.set(`subscription:${password}`, JSON.stringify(subscription));
+		await sendPushNotifications(
+			[subscription],
+			'Subscribed!',
+			'You have successfully subscribed to Hacker News push notifications.'
+		);
 
 		return new Response('Subscription saved', { status: 200 });
 	} catch (error) {
