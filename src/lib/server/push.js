@@ -9,11 +9,12 @@ webpush.setVapidDetails('mailto:marfay@me.com', PUBLIC_VAPID_KEY, PRIVATE_VAPID_
  * @param {import('web-push').PushSubscription[]} subscriptions - Array of push subscription objects
  * @param {string} title - The title of the notification
  * @param {string} body - The body text of the notification
+ * @param {string} [url] - The URL to open when notification is clicked
  * @param {number} [batchSize=100] - Number of notifications to send in parallel
  * @returns {Promise<{success: number, failed: number, errors: Error[]}>}
  */
-export async function sendPushNotifications(subscriptions, title, body, batchSize = 100) {
-	const payload = JSON.stringify({ title, body });
+export async function sendPushNotifications(subscriptions, title, body, url, batchSize = 100) {
+	const payload = JSON.stringify({ title, body, url });
 	const results = { success: 0, failed: 0, errors: [] };
 
 	for (let i = 0; i < subscriptions.length; i += batchSize) {

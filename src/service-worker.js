@@ -85,43 +85,40 @@ sw.addEventListener('fetch', (event) => {
 	event.respondWith(respond());
 });
 
-// Add push notification event listener
 sw.addEventListener('push', (event) => {
 	if (!event.data) return;
 
 	const data = event.data.json();
 	const options = {
 		body: data.body,
-		data: data.url,
+		data: {
+			url: data.url
+		},
 		actions: data.actions || []
 	};
 
 	event.waitUntil(sw.registration.showNotification(data.title, options));
 });
 
-// Handle notification click
 sw.addEventListener('notificationclick', (event) => {
 	event.notification.close();
 
 	if (event.action) {
-		// Handle custom actions if defined
 		console.log('Action clicked:', event.action);
 	}
 
-	// Open the app/specific page when notification is clicked
+	const url = event.notification.data?.url;
+
 	event.waitUntil(
 		clients.matchAll({ type: 'window' }).then((clientList) => {
-			if (clientList.length > 0) {
-				// If a window exists, focus it and navigate if needed
-				const client = clientList[0];
-				client.focus();
-				if (event.notification.data) {
-					return client.navigate(event.notification.data);
-				}
-			} else {
-				// If no window exists, open a new one
-				if (event.notification.data) {
-					return clients.openWindow(event.notification.data);
+			if (url) {
+				if (clientList.length > 0) {
+					const client = clientList[0];
+					client.focus();
+					return client.navigate(url);
+				} else {
+					// If no window exists, open a new one
+					return clients.openWindow(url);
 				}
 			}
 		})

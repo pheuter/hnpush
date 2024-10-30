@@ -35,7 +35,8 @@ export const GET = async ({ request }) => {
 				await sendPushNotifications(
 					subscriptions,
 					story.title,
-					`${story.score} points | ${story.by} | ${story.descendants || 0} comments`
+					`Posted by ${story.by}`,
+					`https://news.ycombinator.com/item?id=${story.id}`
 				);
 
 				// Add story ID to sent set
