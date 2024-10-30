@@ -15,7 +15,6 @@ export const load = async ({ cookies }) => {
 	const hasSubscription = await redis.exists(`subscription:${password}`);
 
 	return {
-		password,
 		hasSubscription
 	};
 };
