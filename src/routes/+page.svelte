@@ -1,6 +1,8 @@
 <script>
 	import { PUBLIC_VAPID_KEY } from '$env/static/public';
 
+	let { data } = $props();
+
 	async function enablePushNotifications() {
 		// Check if the browser supports push notifications
 		if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
@@ -61,6 +63,16 @@
 			</svg>
 		</a>
 	</p>
+
+	<div
+		class="mt-8 rounded-md bg-white p-4 shadow dark:border dark:border-stone-800 dark:bg-stone-900"
+	>
+		<p class="font-mono text-lg font-semibold">{data.password}</p>
+		<p class="mt-2 text-sm text-stone-500 dark:text-stone-400">
+			Save this password - you'll need it to manage your push notification settings.
+		</p>
+	</div>
+
 	<button
 		class="mt-8 w-full rounded-md bg-stone-800 px-4 py-2 font-semibold text-stone-100 transition-colors hover:bg-stone-900 dark:bg-stone-100 dark:text-stone-800 dark:hover:bg-stone-200"
 		onclick={enablePushNotifications}

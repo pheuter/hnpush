@@ -1,0 +1,21 @@
+{
+	"name": "HN Push",
+	"short_name": "HN Push",
+	"description": "Web push notifications for top stories on Hacker News",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#FAFAF9",
+	"theme_color": "#FAFAF9",
+	"icons": [
+		{
+			"src": "/hn_192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "/hn_512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	]
+}
