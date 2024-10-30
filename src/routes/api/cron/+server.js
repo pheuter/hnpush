@@ -23,24 +23,46 @@ export const GET = async ({ request }) => {
 		);
 
 		if (newStoryIds.length > 0) {
-			// Get all subscriptions
-			const subscriptionKeys = await redis.keys('subscription:*');
-			const subscriptions = await Promise.all(subscriptionKeys.map((key) => redis.get(key)));
+			let subscriptions = [];
+			let cursor = '0';
+			do {
+				const [nextCursor, keys] = await redis.scan(cursor, {
+					match: 'subscription:*',
+					count: 100
+				});
+				cursor = nextCursor;
+				if (keys.length > 0) {
+					const batch = await Promise.all(keys.map((key) => redis.get(key)));
+					subscriptions.push(...batch);
+				}
+			} while (cursor !== '0');
 
-			// Fetch full details only for new stories
-			const newStories = await Promise.all(newStoryIds.map((id) => fetchStory(id)));
+			// Fetch stories with error handling
+			const newStories = await Promise.all(
+				newStoryIds.map(async (id) => {
+					try {
+						return await fetchStory(id);
+					} catch (error) {
+						console.error(`Failed to fetch story ${id}:`, error);
+						return null;
+					}
+				})
+			);
 
-			// Send notifications for each new story
-			for (const story of newStories) {
-				await sendPushNotifications(
-					subscriptions,
-					story.title,
-					`Posted by ${story.by}`,
-					`https://news.ycombinator.com/item?id=${story.id}`
-				);
-
-				// Add story ID to sent set
-				await redis.sadd('sent_story_ids', story.id.toString());
+			// Process only successfully fetched stories
+			for (const story of newStories.filter(Boolean)) {
+				try {
+					await sendPushNotifications(
+						subscriptions,
+						story.title,
+						`Posted by ${story.by}`,
+						`https://news.ycombinator.com/item?id=${story.id}`
+					);
+					await redis.sadd('sent_story_ids', story.id.toString());
+				} catch (error) {
+					console.error(`Failed to process story ${story.id}:`, error);
+					// Continue with next story instead of failing completely
+				}
 			}
 		}
 
