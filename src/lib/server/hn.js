@@ -20,13 +20,16 @@ async function fetchTopStories(fetchDetails = false) {
 	const response = await fetch(`${HN_API_BASE}/topstories.json`);
 	const ids = await response.json();
 
+	// Take only the first 30 IDs
+	const limitedIds = ids.slice(0, 30);
+
 	// Return just the IDs if details aren't requested
 	if (!fetchDetails) {
-		return ids;
+		return limitedIds;
 	}
 
 	// Fetch all stories in parallel if details are requested
-	const stories = await Promise.all(ids.map((/** @type {number} */ id) => fetchStory(id)));
+	const stories = await Promise.all(limitedIds.map((/** @type {number} */ id) => fetchStory(id)));
 	return stories;
 }
 
