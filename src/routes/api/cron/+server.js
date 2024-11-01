@@ -37,11 +37,13 @@ export const GET = async ({ request }) => {
 				}
 			} while (cursor !== '0');
 
-			// Fetch stories with error handling
+			// Fetch stories with error handling and filter by points
 			const newStories = await Promise.all(
 				newStoryIds.map(async (id) => {
 					try {
-						return await fetchStory(id);
+						const story = await fetchStory(id);
+						// Only include stories with 30 or more points
+						return story && story.score >= 30 ? story : null;
 					} catch (error) {
 						console.error(`Failed to fetch story ${id}:`, error);
 						return null;
