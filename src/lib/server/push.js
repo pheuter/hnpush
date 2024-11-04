@@ -2,7 +2,7 @@ import webpush from 'web-push';
 import { PRIVATE_VAPID_KEY } from '$env/static/private';
 import { PUBLIC_VAPID_KEY } from '$env/static/public';
 
-webpush.setVapidDetails('mailto:marfay@me.com', PUBLIC_VAPID_KEY, PRIVATE_VAPID_KEY);
+webpush.setVapidDetails('mailto:heymarfay@icloud.com', PUBLIC_VAPID_KEY, PRIVATE_VAPID_KEY);
 
 /**
  * Sends push notifications to multiple subscriptions in batches

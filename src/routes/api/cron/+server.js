@@ -68,7 +68,7 @@ export const GET = async ({ request }) => {
 			}
 		}
 
-		// Optional: Trim the sent stories set to prevent unlimited growth
+		// Trim the sent stories set to prevent unlimited growth
 		// Keep only the last 1000 story IDs
 		const sentCount = await redis.scard('sent_story_ids');
 		if (sentCount > 1000) {

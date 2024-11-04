@@ -98,10 +98,6 @@
 		</a>
 	</p>
 
-	<!-- <div
-		class="mt-8 rounded-md bg-white p-4 shadow dark:border dark:border-stone-800 dark:bg-stone-900"
-	></div> -->
-
 	<button
 		class="mt-8 w-full rounded-md {data.hasSubscription
 			? 'bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:text-stone-100 dark:hover:bg-red-700'
@@ -110,4 +106,45 @@
 	>
 		{data.hasSubscription ? 'Disable' : 'Enable'} Push Notifications
 	</button>
+
+	<div class="mt-8 rounded-md bg-white shadow dark:border dark:border-stone-800 dark:bg-stone-900">
+		<ul role="list" class="divide-y divide-stone-200 dark:divide-stone-800">
+			<li class="px-6 py-4">
+				<h2 class="font-semibold">What?</h2>
+				<p class="mt-2 text-stone-600 dark:text-stone-400">
+					HN Push sends real-time push notifications for trending Hacker News stories with at least
+					30 upvotes.
+				</p>
+			</li>
+			<li class="px-6 py-4">
+				<h2 class="font-semibold">Why?</h2>
+				<p class="mt-2 text-stone-600 dark:text-stone-400">
+					I created HN Push to help reduce the urge to refresh Hacker News constantly. Since I rely
+					on HN for real-time tech news, I wanted an efficient way to stay informed without having
+					to check the site. Receiving summaries with Apple Intelligence was an added bonus.
+				</p>
+			</li>
+			<li class="px-6 py-4">
+				<h2 class="font-semibold">How?</h2>
+				<p class="mt-2 text-stone-600 dark:text-stone-400">
+					HN Push is a Progressive Web App (PWA) that sends web push notifications to your device.
+					You can click a notification to open the story on Hacker News directly. For easy access on
+					iOS, add the app to your home screen via the share button.
+				</p>
+			</li>
+			<li class="px-6 py-4">
+				<h2 class="font-semibold">Who?</h2>
+				<p class="mt-2 text-stone-600 dark:text-stone-400">
+					HN Push is an open-source project by <a
+						href="https://www.markfayngersh.com"
+						class="underline hover:text-stone-900 dark:hover:text-stone-200">Mark Fayngersh</a
+					>. The source code is available on
+					<a
+						href="https://github.com/pheuter/hnpush"
+						class="underline hover:text-stone-900 dark:hover:text-stone-200">GitHub</a
+					>.
+				</p>
+			</li>
+		</ul>
+	</div>
 </div>

@@ -14,7 +14,7 @@ export const POST = async ({ cookies, request }) => {
 		await sendPushNotifications(
 			[subscription],
 			'Subscribed!',
-			'You have successfully subscribed to Hacker News push notifications.',
+			'You have successfully subscribed to HN push notifications.',
 			'https://www.hnpush.com'
 		);
 
