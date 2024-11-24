@@ -29,7 +29,7 @@ async function fetchTopStories(fetchDetails = false) {
 	}
 
 	// Fetch all stories in parallel if details are requested
-	const stories = await Promise.all(limitedIds.map((/** @type {number} */ id) => fetchStory(id)));
+	const stories = await Promise.all(limitedIds.map((id) => fetchStory(id)));
 	return stories;
 }
 
